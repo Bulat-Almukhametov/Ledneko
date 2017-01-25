@@ -61,8 +61,10 @@
     <Compile Include="Entities\Category.cs" />
     <Compile Include="Entities\ContactDetails.cs" />
     <Compile Include="Entities\Scrinshot.cs" />
+    <Compile Include="Entities\Service.cs" />
     <Compile Include="Entities\Solution.cs" />
     <Compile Include="Entities\SolutionViewingDetails.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

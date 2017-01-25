@@ -20,6 +20,7 @@ namespace Ledneko.Domain.Concrete
         public DbSet<Solution> Solutions { get; set; } 
         public DbSet<SolutionViewingDetails> Details { get; set; }
         public DbSet<Scrinshot> Scrinshots { get; set; }
+        public DbSet<Service> Services { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
