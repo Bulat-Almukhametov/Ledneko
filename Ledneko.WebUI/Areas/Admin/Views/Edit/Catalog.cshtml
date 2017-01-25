@@ -1,0 +1,17 @@
+﻿@using System.Web.Services.Protocols
+@model Ledneko.Domain.Entities.Catalog
+
+@{
+    ViewBag.Title = "Редактировать каталог";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Каталог</h2>
+@using (@Html.BeginForm("SaveCatalog", "Edit", FormMethod.Post, new{@class="form-group"}))
+{
+    @Html.HiddenFor(model=>model.Id)
+    @Html.TextBoxFor(model=>model.Name, new{@class="form-control"})
+    @Html.TextAreaFor(model=>model.Description, new{rows=14, @class="form-control"})
+
+    <input type="submit" value="Сохранить"/>
+}

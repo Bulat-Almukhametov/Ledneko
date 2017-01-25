@@ -1,0 +1,64 @@
+﻿@using Ledneko.Domain.Entities;
+@using Microsoft.Ajax.Utilities
+@model IQueryable<object>
+
+@{
+    ViewBag.Title = "Просмотр решений";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.CurrentTab = "Solutions";
+}
+
+<h2>Список решений</h2>
+@if (Model == null)
+{
+    <h1 class="text-muted">Пусто</h1>
+}
+else
+{
+<table>
+    <thead>
+        <th>Описание</th>
+        <th>Цeна</th>
+        <th>Категория</th>
+        <th>Редактировать строку</th>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            
+            var sln = item.GetType();
+            var c=((Category) sln.GetProperty("Category").GetValue(item));
+           
+            <tr>
+               
+                 <td>@sln.GetProperty("Name").GetValue(item)</td>
+                <td>@sln.GetProperty("Price").GetValue(item)</td>
+                <td>@c.Name</td>
+                <td>
+                    @Html.ActionLink("редактировать", "Solution", "Edit", new{solutionId=sln.GetProperty("Id").GetValue(item)},
+                        new{@class="btn btn-success"})
+                    <button class="btn btn-danger" data-solutionid="@sln.GetProperty("Id").GetValue(item)">удалить</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section scripts {
+<script type="text/javascript">
+    $('tbody').on('click', function (event) {
+        var buttonElement = event.target;
+        var solutionid = buttonElement.dataset['solutionid'];
+        console.log("clicked");
+        $.ajax({
+            method: "POST",
+            url: '@Url.Action("DeleteSolution", "Edit")',
+            data: { solutionId: solutionid }
+
+        }).done(function (msg) {
+            var rowElement = buttonElement.parentNode.parentNode;
+            rowElement.parentNode.removeChild(rowElement);
+        });
+    });
+</script>
+}
+}

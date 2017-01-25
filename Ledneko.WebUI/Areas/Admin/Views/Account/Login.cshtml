@@ -1,0 +1,33 @@
+﻿@model Ledneko.WebUI.Areas.Admin.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Авторизация";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="page-header text-muted"><h2>Авторизация</h2></header>
+<div class="row">
+<div id="loginPanel" class="panel panel-primary col-md-3">
+    <div class="panel-heading">
+       <span class="glyphicon glyphicon-user"></span>&nbsp;<b>Введите ваши данные:</b>
+    </div>
+
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+            <div class="input-group">
+                <p>
+                    @Html.ValidationSummary(true)
+                    @Html.EditorForModel()
+                </p>
+                <p>
+                    <input type="submit" value="Отправить" class="btn btn-primary" /></p>
+            </div>
+        }
+    </div>
+</div>
+    <div id="adminDesc" class="well-lg col-md-8 hidden-xs">Администраторы сайтов отвечают за поддержку работоспособности сайта и обеспечение сетевой безопасности, управляют размещением, обновлением, модерацией контента. Регистрация сайта в поисковых системах и тематических каталогах, подготовка рекламной информации, контроль правильного размещения баннеров и ссылок, работы по оптимизации также находятся в компетенции этих специалистов. Администраторы сайтов контролируют оплату доменов и хостинга, управляют правами доступа к сайту, участвуют в продвижении сайта в поисковых системах. Помимо этого их должностные обязанности включают создание резервных копий сайта, ведение статистики посещаемости, поддержку пользователей и поддержание обратной связи с посетителями сайта.
+
+    </div>
+
+    </div>

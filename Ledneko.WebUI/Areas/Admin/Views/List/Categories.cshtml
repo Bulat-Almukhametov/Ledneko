@@ -1,0 +1,61 @@
+﻿@using Ledneko.Domain.Entities;
+@using Microsoft.Ajax.Utilities
+@model IQueryable<object>
+
+@{
+    ViewBag.Title = "Просмотр категорий";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.CurrentTab = "Categories";
+}
+
+<h2>Список решений</h2>
+@if (Model == null)
+{
+    <h1 class="text-muted">Пусто</h1>
+}
+else
+{
+<table>
+    <thead>
+        <th>Название</th>
+        <th>Каталог</th>
+        <th>Редактировать строку</th>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            
+            var cat = item.GetType();
+           
+            <tr>
+               
+                 <td>@cat.GetProperty("Name").GetValue(item)</td>
+                <td>@cat.GetProperty("CatalogName").GetValue(item)</td>
+                <td>
+                    @Html.ActionLink("редактировать", "Category", "Edit", new{catid=cat.GetProperty("Id").GetValue(item)},
+                        new{@class="btn btn-success"})
+                    <button class="btn btn-danger" data-catid="@cat.GetProperty("Id").GetValue(item)">удалить</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section scripts {
+<script type="text/javascript">
+    $('tbody').on('click', function (event) {
+        var buttonElement = event.target;
+        var catid = buttonElement.dataset['catid'];
+        console.log("clicked");
+        $.ajax({
+            method: "POST",
+            url: '@Url.Action("DeleteCategory", "Edit")',
+            data: { catid: catid }
+
+        }).done(function (msg) {
+            var rowElement = buttonElement.parentNode.parentNode;
+            rowElement.parentNode.removeChild(rowElement);
+        });
+    });
+</script>
+}
+}

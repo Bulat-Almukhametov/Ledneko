@@ -1,0 +1,48 @@
+﻿.content {
+    
+}
+
+.form-control {
+    width: 300pt;
+}
+
+#addScrin {
+    width: 300pt;
+    height: 150pt;
+}
+
+.arrow {
+    width: 100px;
+    height: 30px;
+}
+
+
+#sliderContainer {
+  position: relative;
+  overflow: hidden;
+  margin: 20px auto 0 auto;
+  border-radius: 4px;
+    width: 150pt;
+    height: 100pt;
+}
+
+#sliderContainer ul {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  height: 200px;
+  list-style: none;
+}
+
+#sliderContainer ul li {
+  position: relative;
+  display: block;
+  float: left;
+  margin: 0;
+  padding: 0;
+  width: 500px;
+  height: 300px;
+  background: #ccc;
+  text-align: center;
+  line-height: 300px;
+}

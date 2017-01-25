@@ -1,0 +1,26 @@
+﻿@model Ledneko.WebUI.Areas.Admin.Models.EditCategoryModel
+
+@{
+    ViewBag.Title = "Category";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Редактировать категорию</h2>
+
+@using (Html.BeginForm("SaveCategory", "Edit", FormMethod.Post, new {@class="form-group"}))
+{
+    @Html.HiddenFor(model=>model.Category.Id, new {Name="Id"})
+
+    @Html.TextBoxFor(model=>model.Category.Name, new {@class="form-control", Name="Name"})
+    
+    <div class="cat-selector">
+        <select id="catalog" name="CatalogId" class="form-control">
+            @foreach (var catalog in Model.Catalogs)
+            {
+                <option selected="@(catalog.Id == Model.Category.CatalogId)" value="@catalog.Id">@catalog.Name</option>
+            }
+        </select>
+    </div>
+    
+    <input type="submit" value="Сохранить"/>
+}

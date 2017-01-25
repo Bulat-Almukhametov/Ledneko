@@ -1,0 +1,311 @@
+﻿@model Ledneko.WebUI.Areas.Admin.Models.EditSolutionModel
+
+@{
+    ViewBag.Title = "Редактировать решение";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<link rel="stylesheet" href="/Content/unslider-dots.css" />
+<link rel="stylesheet" href="/Content/unslider.css" />
+
+<h2>Редактировать решение</h2>
+
+<div class="cat-selector">
+    <select id="catalog" name="catalogId">
+        @foreach (var catalog in Model.Catalogs)
+        {
+            <option selected="@(catalog.Id == Model.CurentCatalog)" value="@catalog.Id">@catalog.Name</option>
+        }
+    </select>
+</div>
+
+@if (Model.Solution.Id > 0)
+{
+    <h4>Логотип</h4>
+    using (Html.BeginForm("SaveLogo", "Edit", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="logo">
+            <img src="/api/GetLogo?solutionId=@Model.Solution.Id"/>
+        </div>
+
+        <input type="hidden" name="SolutionId" value="@Model.Solution.Id"/>
+        <input type="file" name="image" />
+        <br />
+        <input type="submit" value="Обновить логотип" />
+    }
+}
+
+@using (Html.BeginForm("Solution", "Edit", FormMethod.Post,
+    new { enctype = "multipart/form-data", @class = "form-group" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Решение</legend>
+
+        <div class="cat-elector">
+
+            <select id="category" name="CategoryId">
+                @foreach (var category in Model.Categories)
+                {
+                    <option selected="@(category.Id == Model.CurrentCategory)" value="@category.Id">@category.Name</option>
+                }
+            </select>
+        </div>
+
+        <div id="solution">
+
+            @Html.HiddenFor(model => model.Solution.Id, new { Name = "SolutionId" })
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Solution.Name)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Solution.Name,
+                new { @class = "form-control", Name = "Name" })
+                @Html.ValidationMessageFor(model => model.Solution.Name)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Solution.Price)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Solution.Price,
+                new { @class = "form-control", Name = "Price" })
+                @Html.ValidationMessageFor(model => model.Solution.Price)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Solution.OldPrice)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Solution.OldPrice,
+                new { @class = "form-control", Name = "OldPrice" })
+                @Html.ValidationMessageFor(model => model.Solution.OldPrice)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Solution.DemoUrl)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Solution.DemoUrl,
+                new { @class = "form-control", Name = "DemoUrl" })
+                @Html.ValidationMessageFor(model => model.Solution.DemoUrl)
+            </div>
+
+
+        </div>
+
+        <div id="details">
+
+            @Html.HiddenFor(model => model.Solution.SolutionViewingDetailsId, new { Name = "ViewingDetailsId" })
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Solution.SolutionViewingDetails.Header)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Solution.SolutionViewingDetails.Header,
+                new { @class = "form-control", Name = "Header" })
+                @Html.ValidationMessageFor(model => model.Solution.SolutionViewingDetails.Header)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Solution.SolutionViewingDetails.Description)
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(model => model.Solution.SolutionViewingDetails.Description,
+                new { @class = "input-description form-control", rows = 15, Name = "Description" })
+                @Html.ValidationMessageFor(model => model.Solution.SolutionViewingDetails.Description)
+            </div>
+
+        </div>
+
+
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+}
+
+
+
+@if (Model.Solution.Id > 0)
+{
+    <h4>Скриншоты</h4>
+
+    <div id="sliderContainer">
+        <ul id="scrinshots" data-ids="@String.Join(",", Model.Ids)">
+
+            @foreach (var scrinshotId in Model.Ids)
+            {
+                <li class="scrinshot thumbnail" data-id="@scrinshotId" data-detailsId="@Model.Solution.SolutionViewingDetailsId">
+
+
+                    <div style="background-image: url('/api/GetScrinshot?scrinId=@scrinshotId&detailsId=@Model.Solution.SolutionViewingDetailsId'); background-size: 100% 100%;">
+                        <a name="deleteButton" style="cursor: pointer; color: red; background-color: lightgrey;">удалить</a>
+                    </div>
+                </li>
+            }
+
+        </ul>
+
+    </div>
+    <button id="left">Пред</button>
+    <button id="right">След.</button>
+    <div id="addScrin">
+        <img id="display" style="visibility: hidden; width: inherit; height: inherit" />
+        <form enctype="multipart/form-data">
+            <input type="file" id="newScrin" name="image" />
+            <input type="hidden" name="detailsId" value="@Model.Solution.SolutionViewingDetailsId"/>
+            <input type="submit" id="scrinAddButton" style="visibility: hidden;" value="Добавить">
+        </form>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <!-- слайдер -->
+    <script src="/Scripts/unslider-min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            var slideCount = $('#sliderContainer ul li').length;
+            if (slideCount == 0)
+                $("#sliderContainer").css('background-image', 'url("/Content/no_photo.jpg")');
+           else
+                $("#sliderContainer").css('background-image', "");
+
+
+            if (slideCount < 3) slideCount = 3;
+
+            var slideWidth = $('#sliderContainer ul li').width();
+            var slideHeight = $('#sliderContainer ul li').height();
+            var sliderUlWidth = slideCount * slideWidth;
+
+          
+        $('#sliderContainer').css({ width: slideWidth, height: slideHeight });
+
+        $('#sliderContainer ul li:last-child').prependTo('#sliderContainer ul');
+
+        function moveLeft() {
+            $('#sliderContainer ul').animate({
+                left: +slideWidth
+            }, 200, function() {
+                $('#sliderContainer ul li:last-child').prependTo('#sliderContainer ul');
+                $('#sliderContainer ul').css('left', '');
+            });
+        };
+
+        function moveRight() {
+            $('#sliderContainer ul').animate({
+                left: -slideWidth
+            }, 200, function() {
+                $('#sliderContainer ul li:first-child').appendTo('#sliderContainer ul');
+                $('#sliderContainer ul').css('left', '');
+            });
+        };
+
+        $('#left').click(function() {
+            moveLeft();
+        });
+
+        $('#right').click(function() {
+            moveRight();
+        });
+    });
+    </script>
+
+
+    <!-- удалить скриншот -->
+    <script type="text/javascript">
+        $("#scrinshots").on('click', function (event) {
+            if (event.target.name != 'deleteButton')
+                return;
+
+            var scrin = event.target.parentNode.parentNode;
+            var scrinId = scrin.dataset["id"];
+            var detailsId = scrin.dataset["detailsid"];
+
+            $.ajax({
+                method: 'POST',
+                url: 'DeleteScrinshot',
+                data: { 'scrinId': scrinId, 'detailsId': detailsId }
+            }).done(function (msg) {
+                scrin.parentNode.removeChild(scrin);
+            });
+        });
+    </script>
+
+    <!-- добавить скриншот -->
+    <script type="text/javascript">
+        $("#newScrin").on("change", function (evt) {
+            var files = evt.target.files;
+            var fr = new FileReader();
+            fr.onload = function () {
+                $("#display").attr("src", fr.result);
+                $("#display").css("visibility", "visible");
+                $("#newScrin").css("visibility", "hidden");
+                $("#scrinAddButton").css("visibility", "visible");
+                window.my_img = fr.result;
+
+            };
+            fr.readAsDataURL(files[0]);
+        });
+
+        $("#scrinAddButton").parent().on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            var form = this;
+            $.ajax({
+                url: '@Url.Action("AddScrinshot")',
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                cache: false,
+                error: function (msg) { window.msg = msg; }
+            }).done(function (msg) {
+                if (msg != 'error occured') {
+
+                    var scrin = $(".scrinshot")[0];
+                    if (!scrin) location.reload();
+
+                    scrin = scrin.cloneNode(true);
+                    scrin.dataset["id"] = msg;
+                    scrin.children[0].style.backgroundImage = 'url("/api/GetScrinshot?scrinId='
+                        + msg
+                        + '&detailsId=' + scrin.dataset["detailsid"]
+                        + '")';
+
+                    $(".scrinshot")[0].parentNode.appendChild(scrin);
+
+                    form.reset();
+
+                    $("#display").attr("src", "");
+                    $("#display").css("visibility", "hidden");
+                    $("#newScrin").css("visibility", "visible");
+                    $("#scrinAddButton").css("visibility", "hidden");
+                }
+            });
+
+        });
+    </script>
+
+    <!-- изменить список категорий -->
+    <script type="text/javascript">
+        $("#catalog").on('change', function (event) {
+            var link = '/api/GetCategories?catalogId=' + event.target.value;
+            console.log(link);
+            $.ajax({
+                method: 'GET',
+                url: link
+            }).done(function (categories) {
+                var categoryContainer = $("#category");
+                window.categoryContainer = categoryContainer;
+                window.categories = categories;
+                categoryContainer.html("");
+                for (var i = 0; i < categories.length; i++) {
+                    categoryContainer.html(categoryContainer.html() + '<option value="' +
+                        categories[i].Id + '">' + categories[i].Name + '</option>');
+                }
+            });
+        });
+    </script>
+}
