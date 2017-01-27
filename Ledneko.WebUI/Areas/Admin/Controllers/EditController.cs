@@ -230,7 +230,7 @@ namespace Ledneko.WebUI.Areas.Admin.Controllers
             var result = new EditServiceModel
             {
                 Service = service,
-                Images = services.GetPictures.Where(pic => pic.ServiceId == service.Id)
+                Images = services.GetPictures.Where(pic => pic.ServiceId == service.Id).Select(pic => pic.Id)
             };
 
             return View(result);
@@ -244,6 +244,7 @@ namespace Ledneko.WebUI.Areas.Admin.Controllers
             return result ? "success" : "error occured";
         }
 
+        [ValidateInput(false)] 
         [HttpPost]
         public ActionResult SaveService(Service service)
         {
@@ -270,11 +271,37 @@ namespace Ledneko.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public string SavePicture(Picture pic)
+        public string SavePicture(int srvId, HttpPostedFileBase image)
         {
-            if (services.SavePicture(pic))
-                return pic.Id.ToString();
-            else return "error occured";
+            if (image != null)
+            {
+
+                var pic = new Picture();
+                pic.ServiceId = srvId;
+
+                var DataImageBytes = new byte[image.ContentLength];
+                image.InputStream.Read(DataImageBytes, 0, image.ContentLength);
+
+                pic.ImageData = DataImageBytes;
+                pic.MimeType = image.ContentType;
+
+                if (services.SavePicture(pic))
+                    return pic.Id.ToString();
+            }
+
+            return "error occured";
+
         }
+
+
+        [HttpPost]
+        public string DeletePicture(int picId)
+        {
+            if (services.DeletePicture(picId))
+                return "success";
+            else
+                return "error occured";
+        }
+
     }
 }

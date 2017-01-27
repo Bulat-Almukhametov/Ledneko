@@ -31,7 +31,7 @@ else
                     <td>
                         @Html.ActionLink("редактировать", "Service", "Edit", new { srvid = serv.Id },
                         new { @class = "btn btn-success" })
-                        <button class="btn btn-danger" data-catid="@serv.Id">удалить</button>
+                        <button class="btn btn-danger" data-srvid="@serv.Id">удалить</button>
                     </td>
                 </tr>
             }

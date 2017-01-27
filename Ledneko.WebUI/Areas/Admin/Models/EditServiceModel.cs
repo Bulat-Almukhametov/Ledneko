@@ -9,6 +9,6 @@ namespace Ledneko.WebUI.Areas.Admin.Models
     public class EditServiceModel
     {
         public Service Service { get; set; }
-        public IQueryable<Picture> Images { get; set; } 
+        public IQueryable<int> Images { get; set; } 
     }
 }

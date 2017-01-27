@@ -8,7 +8,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using System.Web.Http;
-using System.Web.Mvc;
 using Ledneko.Domain.Abstract;
 using Ledneko.Domain.Entities;
 
@@ -90,6 +89,7 @@ namespace Ledneko.WebUI.Controllers
             }
         }
 
+        [ActionName("GetPicture")]
         public HttpResponseMessage GetPicture(int picId)
         {
             Picture picture = services.GetPictures.FirstOrDefault(pic => pic.Id == picId);

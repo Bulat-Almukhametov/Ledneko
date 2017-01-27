@@ -13,32 +13,64 @@
     <h4>Логотип</h4>
     using (Html.BeginForm("SaveSrvLogo", "Edit", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
-        <div class="logo">
-            <img src="/api/GetsrvLogo?srvId=@Model.Service.Id"/>
-        </div>
+    <div class="logo">
+        <img src="/api/GetsrvLogo?srvId=@Model.Service.Id"/>
+    </div>
 
-        <input type="hidden" name="srvId" value="@Model.Service.Id"/>
-        <input type="file" name="image" />
-        <br />
-        <input type="submit" value="Обновить логотип" />
+    <input type="hidden" name="srvId" value="@Model.Service.Id"/>
+    <input type="file" name="image" />
+    <br />
+    <input type="submit" value="Обновить логотип" />
     }
 }
 
-@using (Html.BeginForm("SaveService", "Edit", FormMethod.Post, new{@class="form-group"}))
+@using (Html.BeginForm("SaveService", "Edit", FormMethod.Post, new { @class = "form-group" }))
 {
-    @Html.HiddenFor(model=>model.Service.Id, new{Name="Id"})
+    @Html.HiddenFor(model => model.Service.Id, new { Name = "Id" })
     <label for="Name">Название услуги</label>
-    @Html.TextBoxFor(model=>model.Service.Name, new{Name="Name", @class="form-control"})
+    @Html.TextBoxFor(model => model.Service.Name, new { Name = "Name", @class = "form-control" })
     <label for="Description">Краткое описание</label>
-    @Html.TextAreaFor(model=>model.Service.Description, new{Name="Description", @class="form-control", rows=6})
+    @Html.TextAreaFor(model => model.Service.Description, new { Name = "Description", @class = "form-control", rows = 6 })
     <label for="Content">Полное содержание</label>
-    @Html.TextAreaFor(model=>model.Service.Content, new{Name="Content", @class="form-control", rows=45})
+    @Html.TextAreaFor(model => model.Service.Content, new { id="htmleditor",Name = "Content",  rows = 30 })
 
-    <input type="submit" value="Сохранить" class="btn btn-success"/>
+    <input type="submit" value="Сохранить" class="btn btn-success" />
 }
 
 
+@if (Model.Service.Id > 0)
+{
+    <h4>Вставные изображения</h4>
+    
+    <div id="picUrl"></div>
+    <div id="sliderContainer">
+        <ul id="scrinshots" data-ids="@String.Join(",", Model.Images)">
 
+            @foreach (var picId in Model.Images)
+            {
+                <li class="scrinshot thumbnail" data-id="@picId">
+                    <div style="background-image:url('/api/GetPicture?picId=@picId'); background-size: 100% 100%;">
+                        <a name="deleteButton" style="cursor: pointer; color: red; background-color: lightgrey;">удалить</a>
+                    </div>
+                </li>
+            }
+            <!-- -->
+        </ul>
+
+    </div>
+    <button id="left">Пред</button>
+    <button id="right">След.</button>
+    
+    <div id="addScrin">
+        <img id="display" style="visibility: hidden; width: inherit; height: inherit" />
+        <form enctype="multipart/form-data">
+
+            <input type="hidden" name="srvId" value="@Model.Service.Id"/>
+            <input type="file" id="newScrin" name="image" />
+            <input type="submit" id="scrinAddButton" style="visibility: hidden;" value="Добавить">
+        </form>
+    </div>
+}
 
 
 
@@ -46,5 +78,165 @@
 
 @section scripts
 {
+    @Scripts.Render("~/bundles/jqueryval")
+    <!-- слайдер -->
+    <script src="/Scripts/unslider-min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var picUrl = $("#picUrl");
+            var slideCount = $('#sliderContainer ul li').length;
+            if (slideCount == 0)
+                $("#sliderContainer").css('background-image', 'url("/Content/no_photo.png")');
+            else
+                $("#sliderContainer").css('background-image', "");
+
+
+            if (slideCount < 3) slideCount = 3;
+
+            var slideWidth = $('#sliderContainer ul li').width();
+            var slideHeight = $('#sliderContainer ul li').height();
+            var sliderUlWidth = slideCount * slideWidth;
+
+
+            $('#sliderContainer').css({ width: slideWidth, height: slideHeight });
+
+            $('#sliderContainer ul li:last-child').prependTo('#sliderContainer ul');
+
+            setUrl();
+
+            function setUrl() {
+                if (slideCount == 0)
+                    return;
+                var divEl = $('#sliderContainer ul li:first-child').children()[0];
+                var str = '<input type="text" class="form-control" readonly value="'
+                    + divEl.style.backgroundImage
+                    .substring(5, divEl.style.backgroundImage.length - 2) + '"/>';
+                $("#picUrl").html(str);
+            }
+
+            function moveLeft() {
+                $('#sliderContainer ul').animate({
+                    left: +slideWidth
+                }, 200, function () {
+                    $('#sliderContainer ul li:last-child').prependTo('#sliderContainer ul');
+                    $('#sliderContainer ul').css('left', '');
+                    setUrl();
+                });
+            };
+
+            function moveRight() {
+                $('#sliderContainer ul').animate({
+                    left: -slideWidth
+                }, 200, function () {
+                    $('#sliderContainer ul li:first-child').appendTo('#sliderContainer ul');
+                    $('#sliderContainer ul').css('left', '');
+                    setUrl();
+                });
+            };
+
+            $('#left').click(function () {
+                moveLeft();
+            });
+
+            $('#right').click(function () {
+                moveRight();
+            });
+        });
+    </script>
+
+
+    <!-- удалить скриншот -->
+    <script type="text/javascript">
+        $("#scrinshots").on('click', function (event) {
+            if (event.target.name != 'deleteButton')
+                return;
+
+            var scrin = event.target.parentNode.parentNode;
+            var scrinId = scrin.dataset["id"];
+
+            $.ajax({
+                method: 'POST',
+                url: 'DeletePicture',
+                data: { 'picId': scrinId }
+            }).done(function (msg) {
+                if (msg != "error occured")
+                    scrin.parentNode.removeChild(scrin);
+                else alert(msg);
+            });
+        });
+    </script>
+
+    <!-- добавить скриншот -->
+    <script type="text/javascript">
+        $("#newScrin").on("change", function (evt) {
+            var files = evt.target.files;
+            var fr = new FileReader();
+            fr.onload = function () {
+                $("#display").attr("src", fr.result);
+                $("#display").css("visibility", "visible");
+                $("#newScrin").css("visibility", "hidden");
+                $("#scrinAddButton").css("visibility", "visible");
+                window.my_img = fr.result;
+
+            };
+            fr.readAsDataURL(files[0]);
+        });
+
+        $("#scrinAddButton").parent().on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            var form = this;
+            $.ajax({
+                url: '@Url.Action("SavePicture")',
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                cache: false,
+                error: function (msg) { window.msg = msg; }
+            }).done(function (msg) {
+                if (msg != 'error occured') {
+
+                    var scrin = $(".scrinshot")[0];
+                    if (!scrin) location.reload();
+
+                    scrin = scrin.cloneNode(true);
+                    scrin.dataset["id"] = msg;
+                    scrin.children[0].style.backgroundImage = 'url("/api/GetPicture?picId='
+                        + msg;
+
+                    $(".scrinshot")[0].parentNode.appendChild(scrin);
+
+                    form.reset();
+
+                    $("#display").attr("src", "");
+                    $("#display").css("visibility", "hidden");
+                    $("#newScrin").css("visibility", "visible");
+                    $("#scrinAddButton").css("visibility", "hidden");
+                } else alert(msg);
+            });
+
+        });
+    </script>
     
+    <!-- HTML редактор -->
+    <link rel="stylesheet" href="/Content/office-toolbar.min.css" type="text/css" media="all"/>
+    <script type="text/javascript" src="/Scripts/jquery.sceditor.js"></script>
+    <script type="text/javascript" src="/Scripts/ru.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            var initEditor = function() {
+                $("textarea[name='Content']").sceditor({
+                    plugins: 'xhtml',
+                    style: "/Content/office-toolbar.min.css",
+                    locale: "ru"
+                });
+            };
+
+            initEditor();
+        });
+    </script>
+		
 }

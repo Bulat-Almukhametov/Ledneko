@@ -46,3 +46,17 @@
   text-align: center;
   line-height: 300px;
 }
+
+.sceditor-container {
+    min-width: 590px !important;
+}
+ 
+iframe {
+    min-width: 560px;
+}
+
+.sourceEditor, .valid {
+    min-width: 560px;
+    font-size: 7pt;
+    font-family: serif;
+}

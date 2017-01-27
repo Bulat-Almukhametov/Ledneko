@@ -168,7 +168,7 @@
         $(function() {
             var slideCount = $('#sliderContainer ul li').length;
             if (slideCount == 0)
-                $("#sliderContainer").css('background-image', 'url("/Content/no_photo.jpg")');
+                $("#sliderContainer").css('background-image', 'url("/Content/no_photo.png")');
            else
                 $("#sliderContainer").css('background-image', "");
 
@@ -225,7 +225,7 @@
 
             $.ajax({
                 method: 'POST',
-                url: 'DeleteScrinshot',
+                url: 'Delete',
                 data: { 'scrinId': scrinId, 'detailsId': detailsId }
             }).done(function (msg) {
                 scrin.parentNode.removeChild(scrin);
