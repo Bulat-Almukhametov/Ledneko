@@ -7,6 +7,7 @@ using Ledneko.Domain.Abstract;
 using Ledneko.Domain.Entities;
 using Ledneko.WebUI.Areas.Admin.Models;
 using Microsoft.Ajax.Utilities;
+using Microsoft.Data.OData;
 
 namespace Ledneko.WebUI.Areas.Admin.Controllers
 {
@@ -15,12 +16,14 @@ namespace Ledneko.WebUI.Areas.Admin.Controllers
         private ISolutionRepository solutions;
         private ICategoryRepository categories;
         private ICatalogRepository catalogs;
+        private IServiceRepository services;
 
-        public EditController(ISolutionRepository sln, ICategoryRepository categ, ICatalogRepository catal)
+        public EditController(ISolutionRepository sln, ICategoryRepository categ, ICatalogRepository catal, IServiceRepository srv)
         {
             solutions = sln;
             categories = categ;
             catalogs = catal;
+            services = srv;
         }
 
         [HttpPost]
@@ -144,8 +147,8 @@ namespace Ledneko.WebUI.Areas.Admin.Controllers
         public ActionResult Category(int catid = 0)
         {
             Category category;
-            if(catid == 0)
-            category = new Category();
+            if (catid == 0)
+                category = new Category();
             else
             {
                 category = categories.GetCategories.FirstOrDefault(cat => cat.Id == catid);
@@ -210,6 +213,68 @@ namespace Ledneko.WebUI.Areas.Admin.Controllers
 
 
             return RedirectToAction("Catalogs", "List");
+        }
+        public ActionResult Service(int srvid = 0)
+        {
+            Service service;
+            if (srvid == 0)
+                service = new Service();
+            else
+            {
+                service = services.GetServices.FirstOrDefault(srv => srv.Id == srvid);
+            }
+
+            if (service == null)
+                return RedirectToAction("Services", "List");
+
+            var result = new EditServiceModel
+            {
+                Service = service,
+                Images = services.GetPictures.Where(pic => pic.ServiceId == service.Id)
+            };
+
+            return View(result);
+        }
+
+        [HttpPost]
+        public string DeleteService(int srvid = 0)
+        {
+            var result = services.DeleteService(srvid);
+
+            return result ? "success" : "error occured";
+        }
+
+        [HttpPost]
+        public ActionResult SaveService(Service service)
+        {
+            services.SaveService(service);
+
+            return RedirectToAction("Services", "List");
+        }
+
+        [HttpPost]
+        public ActionResult SaveSrvLogo(int srvId, HttpPostedFileBase image)
+        {
+            if (image != null)
+            {
+                var DataImageBytes = new byte[image.ContentLength];
+                image.InputStream.Read(DataImageBytes, 0, image.ContentLength);
+
+                if (services.SaveLogo(srvId, DataImageBytes, image.ContentType))
+                    TempData["message"] = string.Format("\"Логотип\" был сохранен в Базе Данных");
+                else
+                    TempData["message"] = string.Format("Не удалось сохранить \"логотип\" в Базе Данных");
+            }
+
+            return RedirectToAction("Service", new { srvid = srvId });
+        }
+
+        [HttpPost]
+        public string SavePicture(Picture pic)
+        {
+            if (services.SavePicture(pic))
+                return pic.Id.ToString();
+            else return "error occured";
         }
     }
 }

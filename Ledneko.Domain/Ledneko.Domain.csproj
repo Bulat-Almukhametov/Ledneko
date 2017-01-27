@@ -91,6 +91,7 @@
     <Compile Include="Entities\Category.cs" />
     <Compile Include="Entities\ContactDetails.cs" />
     <Compile Include="Entities\ImageFile.cs" />
+    <Compile Include="Entities\Picture.cs" />
     <Compile Include="Entities\Scrinshot.cs" />
     <Compile Include="Entities\Service.cs" />
     <Compile Include="Entities\Solution.cs" />

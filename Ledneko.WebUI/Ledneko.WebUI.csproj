@@ -168,6 +168,7 @@
     <Compile Include="Areas\Admin\Controllers\ListController.cs" />
     <Compile Include="Areas\Admin\Models\EditCategoryModel.cs" />
     <Compile Include="Areas\Admin\Models\EditedSolutionModel.cs" />
+    <Compile Include="Areas\Admin\Models\EditServiceModel.cs" />
     <Compile Include="Areas\Admin\Models\EditSolutionModel.cs" />
     <Compile Include="Areas\Admin\Models\LoginViewModel.cs" />
     <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
@@ -237,6 +238,8 @@
     <Content Include="Areas\Admin\Views\Edit\Category.cshtml" />
     <Content Include="Areas\Admin\Views\List\Catalogs.cshtml" />
     <Content Include="Areas\Admin\Views\Edit\Catalog.cshtml" />
+    <Content Include="Areas\Admin\Views\List\Services.cshtml" />
+    <Content Include="Areas\Admin\Views\Edit\Service.cshtml" />
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

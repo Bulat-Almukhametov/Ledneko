@@ -6,15 +6,13 @@ using System.Threading.Tasks;
 
 namespace Ledneko.Domain.Entities
 {
-    public class Service
+    public class Picture
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string Content { get; set; }
+        public int ServiceId { get; set; }
         public byte[] ImageData { get; set; }
         public string MimeType { get; set; }
 
-        public ICollection<Picture> Pictures { get; set; } 
+        public Service Service { get; set; }
     }
 }

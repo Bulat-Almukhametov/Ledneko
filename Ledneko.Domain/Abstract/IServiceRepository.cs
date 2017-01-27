@@ -17,5 +17,8 @@ namespace Ledneko.Domain.Abstract
         bool DeleteService(int serviceId);
         bool SaveLogo(int serviceId, byte[] imageData, string mimeType);
         ImageFile GetLogo(int serviceId);
+        IQueryable<Picture> GetPictures { get; }
+        bool SavePicture(Picture picture);
+        bool DeletePicture(int picId);
     }
 }

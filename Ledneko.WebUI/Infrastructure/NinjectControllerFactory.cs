@@ -30,6 +30,7 @@ namespace Ledneko.WebUI.Infrastructure
             ninjectKernel.Bind<ISolutionRepository>().To<EfSolutionRepository>();
             ninjectKernel.Bind<ICategoryRepository>().To<EfCategoryRepository>();
             ninjectKernel.Bind<ICatalogRepository>().To<EfCatalogRepository>();
+            ninjectKernel.Bind<IServiceRepository>().To<EFServiceRepository>();
             #endregion
 
             #region e-mail

@@ -118,5 +118,38 @@ namespace Ledneko.Domain.Concrete
                 return null;
             }
         }
+
+        public IQueryable<Picture> GetPictures
+        {
+            get { return context.Pictures; }
+        }
+
+        public bool SavePicture(Picture picture)
+        {
+            try
+            {
+                context.Pictures.Add(picture);
+
+                context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool DeletePicture(int picId)
+        {
+            Picture dbEntry = context.Pictures.Find(picId);
+            if (dbEntry == null)
+                return false;
+            else
+            {
+                context.Pictures.Remove(dbEntry);
+                context.SaveChanges();
+                return true;
+            }
+        }
     }
 }

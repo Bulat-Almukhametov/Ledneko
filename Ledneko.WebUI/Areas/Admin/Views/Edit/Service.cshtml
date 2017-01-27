@@ -1,0 +1,50 @@
+﻿@model Ledneko.WebUI.Areas.Admin.Models.EditServiceModel
+
+@{
+    ViewBag.Title = "Редактирование";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Редактировать решение</h2>
+
+<h1 class="text-muted">Логотип</h1>
+@if (Model.Service.Id > 0)
+{
+    <h4>Логотип</h4>
+    using (Html.BeginForm("SaveSrvLogo", "Edit", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="logo">
+            <img src="/api/GetsrvLogo?srvId=@Model.Service.Id"/>
+        </div>
+
+        <input type="hidden" name="srvId" value="@Model.Service.Id"/>
+        <input type="file" name="image" />
+        <br />
+        <input type="submit" value="Обновить логотип" />
+    }
+}
+
+@using (Html.BeginForm("SaveService", "Edit", FormMethod.Post, new{@class="form-group"}))
+{
+    @Html.HiddenFor(model=>model.Service.Id, new{Name="Id"})
+    <label for="Name">Название услуги</label>
+    @Html.TextBoxFor(model=>model.Service.Name, new{Name="Name", @class="form-control"})
+    <label for="Description">Краткое описание</label>
+    @Html.TextAreaFor(model=>model.Service.Description, new{Name="Description", @class="form-control", rows=6})
+    <label for="Content">Полное содержание</label>
+    @Html.TextAreaFor(model=>model.Service.Content, new{Name="Content", @class="form-control", rows=45})
+
+    <input type="submit" value="Сохранить" class="btn btn-success"/>
+}
+
+
+
+
+
+
+
+
+@section scripts
+{
+    
+}

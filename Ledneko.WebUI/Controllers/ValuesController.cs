@@ -19,13 +19,15 @@ namespace Ledneko.WebUI.Controllers
         private ISolutionRepository solutions;
         private ICategoryRepository categories;
         private ICatalogRepository catalogs;
+        private IServiceRepository services;
         private readonly int itemsPerPage = 10;
 
-        public ValuesController(ISolutionRepository sln, ICategoryRepository categ, ICatalogRepository catal)
+        public ValuesController(ISolutionRepository sln, ICategoryRepository categ, ICatalogRepository catal, IServiceRepository srv)
         {
             solutions = sln;
             categories = categ;
             catalogs = catal;
+            services = srv;
         }
         public IEnumerable<Catalog> GetCatalogs()
         {
@@ -70,5 +72,40 @@ namespace Ledneko.WebUI.Controllers
                 return null;
             }
         }
+
+        public HttpResponseMessage GetSrvLogo(int srvId)
+        {
+            ImageFile logo = services.GetLogo(srvId);
+            if (logo != null)
+            {
+                HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
+                result.Content = new StreamContent(new MemoryStream(logo.ImageData));
+                result.Content.Headers.ContentType =
+                    new MediaTypeHeaderValue(logo.MimeType);
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public HttpResponseMessage GetPicture(int picId)
+        {
+            Picture picture = services.GetPictures.FirstOrDefault(pic => pic.Id == picId);
+            if (picture != null)
+            {
+                HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
+                result.Content = new StreamContent(new MemoryStream(picture.ImageData));
+                result.Content.Headers.ContentType =
+                    new MediaTypeHeaderValue(picture.MimeType);
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
     }
 }

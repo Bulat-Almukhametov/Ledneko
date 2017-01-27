@@ -14,13 +14,16 @@ namespace Ledneko.WebUI.Areas.Admin.Controllers
         private ISolutionRepository solutions;
         private ICategoryRepository categories;
         private ICatalogRepository catalogs;
+        private IServiceRepository services;
+
         private readonly int itemsPerPage = 10;
 
-        public ListController(ISolutionRepository sln, ICategoryRepository categ, ICatalogRepository catal)
+        public ListController(ISolutionRepository sln, ICategoryRepository categ, ICatalogRepository catal, IServiceRepository srv)
         {
             solutions = sln;
             categories = categ;
             catalogs = catal;
+            services = srv;
         }
 
         public ActionResult Menu(string currentTab)
@@ -62,6 +65,13 @@ namespace Ledneko.WebUI.Areas.Admin.Controllers
             var collection = catalogs.GetCatalogs.Where(cat => name == null || cat.Name.Contains(name)).OrderBy(cat => cat.Id).Skip((page - 1) * itemsPerPage).Take(itemsPerPage);
 
             return View(collection);
+        }
+
+        public ActionResult Services(int page = 1, string name = null)
+        {
+            var collection = services.GetServices.Where(serv => name == null || serv.Name.Contains(name)).OrderBy(serv => serv.Id).Skip((page - 1) * itemsPerPage).Take(itemsPerPage);
+
+            return View(collection); 
         }
 
     }

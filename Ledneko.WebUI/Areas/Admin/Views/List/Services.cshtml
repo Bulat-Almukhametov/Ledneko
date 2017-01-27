@@ -1,0 +1,60 @@
+﻿@model IQueryable<Ledneko.Domain.Entities.Service>
+
+@{
+    ViewBag.Title = "Услуги";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.CurrentTab = "Services";
+    const int descLength = 50;
+}
+
+<h2>Список услуг</h2>
+
+@if (Model == null)
+{
+    <h1 class="text-muted">Пусто</h1>
+}
+else
+{
+    <table>
+        <thead>
+            <th>Название</th>
+            <th>Краткое описание</th>
+            <th>Редактировать строку</th>
+        </thead>
+        <tbody>
+            @foreach (var serv in Model)
+            {
+                <tr>
+
+                    <td>@serv.Name</td>
+                    <td>@(serv.Description != null ? serv.Description.Substring(0, serv.Description.Length > descLength ? descLength : serv.Description.Length) + ".." : "Пусто")</td>
+                    <td>
+                        @Html.ActionLink("редактировать", "Service", "Edit", new { srvid = serv.Id },
+                        new { @class = "btn btn-success" })
+                        <button class="btn btn-danger" data-catid="@serv.Id">удалить</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @section scripts {
+        <script type="text/javascript">
+            $('tbody').on('click', function (event) {
+                var buttonElement = event.target;
+                var srvid = buttonElement.dataset['srvid'];
+                if (!srvid)
+                    return;
+                console.log("clicked");
+                $.ajax({
+                    method: "POST",
+                    url: '@Url.Action("DeleteService", "Edit")',
+            data: { srvid: srvid }
+
+        }).done(function (msg) {
+            var rowElement = buttonElement.parentNode.parentNode;
+            rowElement.parentNode.removeChild(rowElement);
+        });
+    });
+        </script>
+    }
+}
